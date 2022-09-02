@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Services{% endblock title %}
+
+{% block body %}
+
+<div class="container ">
+    <h1 class="text-center">Send Mail</h1>
+    <form method="post" action="/send_email" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">Name</label>
+      <input name="name" type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter Your Name">
+    </div>
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">Sender's Email address</label>
+          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="sender_email">
+          <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputpassword" class="form-label">Password</label>
+          <input type="password" class="form-control" id="exampleInputpassword" aria-describedby="emailHelp" name="password">
+          {% comment %} <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> {% endcomment %}
+        </div>
+
+        <div class="mb-3">
+          <label for="formFile" class="form-label">Choose a CSV file containing receivers Email adress</label>
+          <input class="form-control" type="file" id="formFile" name="csv_file" accept=".csv">
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Subject</label>
+            <input name="subject" type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter Your Subject">
+          </div>
+          <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Message</label>
+            <textarea name="message" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="formFile" class="form-label">Attach a file</label>
+            <input class="form-control" type="file" id="formFile" name="att_file">
+          </div>
+          <button type="submit" class="btn btn-primary" onclick="clickBtn()">Send Mail</button>
+        </form>
+</div>
+{% comment %} <script>
+  function clickBtn() {
+    var txt = document.getElementsByClassName("form_label").value;
+    
+    $.ajax({
+      url: "{% url 'home:call_validate_emails' %}",
+      method: 'POST',
+      data: {"input_data": txt},
+      dataType: "text",
+      contentType: "application/json",
+      beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrf_token);
+        }
+      },
+      error: function(xhr, status, error) {
+        console.log("error")
+      }
+    })
+    .done(function(data) {
+      console.log("Success"); 
+    });
+    
+    // csrf_Used to get token
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = jQuery.trim(cookies[i]);
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    //Csrf in header_Function that grants token
+    function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    };
+  }
+  
+</script> {% endcomment %}
+{% endblock body %}
